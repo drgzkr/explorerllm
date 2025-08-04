@@ -1,0 +1,86 @@
+version: '3.8'
+
+# Educational Setup with Multiple Courses
+# This configuration shows how to run multiple course instances
+# Each course gets its own WebUI but shares Ollama models for efficiency
+
+services:
+  # Shared Ollama service for all courses
+  ollama-shared:
+    image: ollama/ollama:latest
+    container_name: ollama-shared
+    ports:
+      - "11434:11434"
+    volumes:
+      - shared_ollama_models:/root/.ollama
+    restart: unless-stopped
+    # Uncomment for GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Course 1: Computer Science 101
+  cs101-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: cs101-webui
+    ports:
+      - "3001:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama-shared:11434
+      - WEBUI_SECRET_KEY=cs101-change-this-secret-key
+      - WEBUI_NAME=CS 101 - Introduction to Programming
+    volumes:
+      - cs101_webui_data:/app/backend/data
+    depends_on:
+      - ollama-shared
+    restart: unless-stopped
+
+  # Course 2: Mathematics 150
+  math150-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: math150-webui
+    ports:
+      - "3002:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama-shared:11434
+      - WEBUI_SECRET_KEY=math150-change-this-secret-key
+      - WEBUI_NAME=Math 150 - Calculus I
+    volumes:
+      - math150_webui_data:/app/backend/data
+    depends_on:
+      - ollama-shared
+    restart: unless-stopped
+
+  # Course 3: English 201
+  eng201-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: eng201-webui
+    ports:
+      - "3003:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama-shared:11434
+      - WEBUI_SECRET_KEY=eng201-change-this-secret-key
+      - WEBUI_NAME=English 201 - Creative Writing
+    volumes:
+      - eng201_webui_data:/app/backend/data
+    depends_on:
+      - ollama-shared
+    restart: unless-stopped
+
+volumes:
+  # Shared models volume - saves disk space
+  shared_ollama_models:
+  
+  # Course-specific data volumes
+  cs101_webui_data:
+  math150_webui_data:
+  eng201_webui_data:
+
+# Access URLs:
+# CS 101: http://localhost:3001
+# Math 150: http://localhost:3002  
+# English 201: http://localhost:3003

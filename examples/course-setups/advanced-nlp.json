@@ -1,0 +1,59 @@
+{
+  "course_name": "Advanced Natural Language Processing",
+  "course_code": "CS 685",
+  "semester": "Fall 2024",
+  "instructors": ["Prof. Jane Smith", "Dr. Alan Turing"],
+  "ta_emails": ["ta1@university.edu", "ta2@university.edu"],
+  "enrollment_capacity": 50,
+  "model": {
+    "base_model": "llama3.1:8b",
+    "custom_fine_tuning": true,
+    "specialized_datasets": [
+      "course_readings",
+      "nlp_papers_2020_2024",
+      "assignment_examples"
+    ],
+    "model_parameters": {
+      "temperature": 0.7,
+      "max_tokens": 2048,
+      "top_p": 0.9
+    }
+  },
+  "environment": {
+    "webui_port": 3200,
+    "ollama_port": 11600,
+    "required_ram": "32GB",
+    "required_storage": "200GB",
+    "gpu_required": true,
+    "backup_frequency": "daily"
+  },
+  "course_features": {
+    "enable_student_analytics": true,
+    "enable_plagiarism_detection": true,
+    "enable_assignment_grading": false,
+    "conversation_retention_days": 365,
+    "allow_model_switching": true
+  },
+  "available_models": [
+    "llama3.1:8b",
+    "qwen2:7b",
+    "codellama:13b"
+  ],
+  "integration": {
+    "lms_integration": "Canvas",
+    "sso_enabled": true,
+    "grade_passback": false
+  },
+  "privacy_settings": {
+    "anonymize_student_data": true,
+    "export_student_data": true,
+    "gdpr_compliant": true,
+    "ferpa_compliant": true
+  },
+  "assessment_integration": {
+    "track_engagement": true,
+    "measure_learning_outcomes": true,
+    "generate_progress_reports": true
+  },
+  "notes": "Advanced course setup with fine-tuned models, comprehensive analytics, and privacy compliance for graduate-level NLP instruction."
+}

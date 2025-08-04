@@ -1,0 +1,24 @@
+// Sample configuration for a basic course LLMS deployment
+// Each course can have separate custom configurations
+
+{
+  "course_name": "Machine Learning Basics",
+  "instructors": ["Dr. John Doe"],
+  "students": [
+    "student1@example.edu",
+    "student2@example.edu"
+  ],
+  "model": {
+    "name": "OLLAMA-Base",
+    "version": "1.0",
+    "fine_tune": false
+  },
+  "environment": {
+    "webui_port": "3100",
+    "ollama_port": "11500",
+    "required_ram": "8GB",
+    "required_storage": "50GB"
+  },
+  "notes": "This simple configuration uses the base model for introductory machine learning concepts."
+}
+

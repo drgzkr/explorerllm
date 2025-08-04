@@ -1,0 +1,100 @@
+version: '3.8'
+
+# Production Configuration with Nginx Reverse Proxy
+# This setup includes SSL termination and proper security practices
+
+services:
+  # Ollama service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama-prod
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - internal
+    # No exposed ports - only accessible through nginx
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # OpenWebUI service
+  ollama-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ollama-webui-prod
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+      - WEBUI_NAME=ExplorerLLM Production
+    volumes:
+      - ollama_webui_data:/app/backend/data
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    networks:
+      - internal
+    # No exposed ports - only accessible through nginx
+
+  # Nginx reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - ollama-webui
+    restart: unless-stopped
+    networks:
+      - internal
+      - external
+
+  # Optional: Database for analytics
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres-analytics
+    environment:
+      - POSTGRES_DB=explorerllm
+      - POSTGRES_USER=explorerllm
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - internal
+
+  # Optional: Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
+    internal: true
+  external:
+    driver: bridge
+
+volumes:
+  ollama_data:
+  ollama_webui_data:
+  postgres_data:
+  redis_data:
+  nginx_logs:
+
+# Environment variables should be set in .env file:
+# WEBUI_SECRET_KEY=your-very-secure-secret-key-here
+# POSTGRES_PASSWORD=your-database-password-here
