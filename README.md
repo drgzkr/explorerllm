@@ -9,7 +9,7 @@ Breaking free from closed AI systems by providing universities, teachers, and in
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/yourusername/explorerllm.git
+git clone https://github.com/drgzkr/explorerllm.git
 cd explorerllm
 docker-compose up -d
 ```
